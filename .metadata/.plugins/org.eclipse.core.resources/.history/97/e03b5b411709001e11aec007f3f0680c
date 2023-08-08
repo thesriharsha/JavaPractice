@@ -1,0 +1,12 @@
+package shapes;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity(name="shapes.square")
+@Table(name="squares")
+public class Square {
+
+	private int side;
+	
+}

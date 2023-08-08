@@ -1,0 +1,62 @@
+package entities;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="cities")
+public class City1 implements Serializable{
+
+	@Id
+	private String code;
+	
+	@OneToMany(mappedBy = "city", fetch = FetchType.EAGER,
+			cascade = CascadeType.ALL)
+	private List<Flight1> flights = new ArrayList<Flight1>();
+	
+	public List<Flight1> getFlights() {
+		return flights;
+	}
+	public void setFlights(List<Flight1> flights) {
+		this.flights = flights;
+	}
+	private String name;
+	@Column(name="minutes_from_utc")
+	private int minutes;
+	private String country;
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getMinutes() {
+		return minutes;
+	}
+	public void setMinutes(int minutes) {
+		this.minutes = minutes;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
+	
+}

@@ -1,0 +1,12 @@
+package jdbcdemo;
+import java.sql.*;
+
+
+public class DeleteRow {
+
+	public static void main(String[] args) {
+		
+
+	}
+
+}

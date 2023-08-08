@@ -1,0 +1,16 @@
+package static_and_final_exercises;
+
+record Circle(int x, int y, int radius) {
+	
+	public double area() {
+		return 3.14*radius*radius;
+	}
+
+public class TestCircle {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

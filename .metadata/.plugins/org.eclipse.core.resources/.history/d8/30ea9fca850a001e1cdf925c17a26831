@@ -1,0 +1,13 @@
+package com.demo.demo;
+
+import java.util.List;
+
+public class FriendshipQuotations implements Quotations{
+
+	@Override
+	public List<String> getQuotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

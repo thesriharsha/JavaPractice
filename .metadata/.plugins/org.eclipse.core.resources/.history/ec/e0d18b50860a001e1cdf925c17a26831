@@ -1,0 +1,8 @@
+package com.demo.demo;
+
+import java.util.List;
+
+public interface Quotations {
+
+	List<String> getQuotations();
+}

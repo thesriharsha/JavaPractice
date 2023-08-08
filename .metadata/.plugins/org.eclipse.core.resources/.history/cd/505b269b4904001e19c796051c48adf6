@@ -1,0 +1,16 @@
+package jdbcdemo;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class CheckAndInsert {
+
+	public static void main(String[] args) throws Exception{
+		
+		String url = "jdbc:sqlserver://localhost:1433;user=sa;password=<YourStrong@Passw0rd>;database=msdb;encrypt=true;trustServerCertificate=true";
+		Connection c = DriverManager.getConnection(url);
+		
+
+	}
+
+}

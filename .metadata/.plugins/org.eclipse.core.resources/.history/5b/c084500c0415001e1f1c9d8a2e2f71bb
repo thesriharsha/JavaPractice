@@ -1,0 +1,22 @@
+package day26;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+public interface TitleRepo extends CrudRepository<Title, String>{
+	
+	@Query("from Title where price>10")
+	List<Title> getCostlyBooks();
+	
+	@Query("from Title where title_id = :id")
+	Title getTitleByid(@Param("id") String id);
+	
+	//Query Derivation
+	Title findByTitle(String title);
+	
+
+}

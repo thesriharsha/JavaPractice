@@ -1,0 +1,13 @@
+package shapes;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity(name="shapes.rectangle")
+@Table(name="rectangles")
+public class Rectangle {
+
+	private int length;
+	private int breadth;
+	
+}

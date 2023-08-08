@@ -1,0 +1,61 @@
+package jpaAm;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Table(name="ono_payments")
+@Entity(name="jpaAm.payment")
+public class Payment {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	
+	private int amount;
+	@Column(name="date_of_payment")
+	private LocalDate date;
+	
+	DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-uuuu");
+	
+	@OneToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+	@JoinColumn(name="student_id",referencedColumnName = "student_id")
+	private Student student;
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getAmount() {
+		return amount;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+	public LocalDate getDate_of_payment() {
+		return date;
+	}
+
+	public void setDate_of_payment(LocalDate date_of_payment) {
+		this.date_of_payment = date_of_payment;
+	}
+
+	
+	
+}

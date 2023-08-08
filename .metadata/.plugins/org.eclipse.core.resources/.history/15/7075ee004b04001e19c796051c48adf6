@@ -1,0 +1,25 @@
+package jdbcdemo;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.util.Scanner;
+
+public class CheckAndInsert {
+
+	public static void main(String[] args) throws Exception{
+		
+		String url = "jdbc:sqlserver://localhost:1433;user=sa;password=<YourStrong@Passw0rd>;database=msdb;encrypt=true;trustServerCertificate=true";
+		Connection c = DriverManager.getConnection(url);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter the Product id to change the name");
+		int prodid = sc.nextInt();
+		System.out.println("Enter the new name of the Product");
+		String newname = sc.nextLine();
+		PreparedStatement ps = c.prepareStatement("Update products set prodname = ? where ProdId = ?");
+		
+		
+
+	}
+
+}

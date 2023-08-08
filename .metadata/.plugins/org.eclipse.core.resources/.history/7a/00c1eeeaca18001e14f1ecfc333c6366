@@ -1,0 +1,9 @@
+package com.flightinformationsystem.rest;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.flightinformationsystem.entities.Flight;
+
+public interface FlightRepo extends JpaRepository<Flight, String> {
+
+}

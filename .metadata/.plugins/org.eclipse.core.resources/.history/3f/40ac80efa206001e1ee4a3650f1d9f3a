@@ -1,0 +1,8 @@
+package jpaAm;
+
+@Table(name="ono_payments")
+@Entity(name="jpaAm.payment")
+public class Payment {
+
+	
+}

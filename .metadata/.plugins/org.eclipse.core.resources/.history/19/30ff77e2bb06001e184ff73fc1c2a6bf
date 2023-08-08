@@ -1,0 +1,14 @@
+package empdept;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Table(name="department")
+@Entity(name="empdept.department")
+public class Department {
+	
+	@Id
+	private String deptcode;
+	private String deptname;
+	
+}

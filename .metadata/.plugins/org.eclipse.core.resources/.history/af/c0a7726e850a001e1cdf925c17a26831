@@ -1,0 +1,17 @@
+package com.demo.demo;
+
+import java.util.List;
+
+public class WorkQuotations implements Quotations {
+
+	public WorkQuotations() {
+		System.out.println("WorkQuotations()");
+	}
+	
+	@Override
+	public List<String> getQuotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

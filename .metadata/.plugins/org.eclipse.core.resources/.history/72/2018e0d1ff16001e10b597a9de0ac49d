@@ -1,0 +1,99 @@
+package entities;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Table(name="flights")
+@Entity
+public class Flight {
+
+	public String getFlight_no() {
+		return flight_no;
+	}
+	public void setFlight_no(String flight_no) {
+		this.flight_no = flight_no;
+	}
+	public List<ScheduledFlight> getScheduledflights() {
+		return scheduledflights;
+	}
+	public void setScheduledflights(List<ScheduledFlight> scheduledflights) {
+		this.scheduledflights = scheduledflights;
+	}
+	public City getCity() {
+		return city;
+	}
+	public void setCity(City city) {
+		this.city = city;
+	}
+	public String getFrom_city() {
+		return from_city;
+	}
+	public void setFrom_city(String from_city) {
+		this.from_city = from_city;
+	}
+	public String getTo_city() {
+		return to_city;
+	}
+	public void setTo_city(String to_city) {
+		this.to_city = to_city;
+	}
+	public int getMinutes() {
+		return minutes;
+	}
+	public void setMinutes(int minutes) {
+		this.minutes = minutes;
+	}
+	public LocalTime getDeparture_time() {
+		return departure_time;
+	}
+	public void setDeparture_time(LocalTime departure_time) {
+		this.departure_time = departure_time;
+	}
+	public LocalTime getArrival_time() {
+		return arrival_time;
+	}
+	public void setArrival_time(LocalTime arrival_time) {
+		this.arrival_time = arrival_time;
+	}
+	public String getAircraft() {
+		return aircraft;
+	}
+	public void setAircraft(String aircraft) {
+		this.aircraft = aircraft;
+	}
+	@Id
+	private String flight_no;
+	
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name="from_city", referencedColumnName = "code",insertable = false, updatable = false),
+		@JoinColumn(name="to_city", referencedColumnName = "code",insertable = false, updatable = false)
+	})
+	private City city;
+	
+	@OneToMany(mappedBy = "flight")
+	List<ScheduledFlight> scheduledflights = new ArrayList<ScheduledFlight>();
+	
+	private String from_city;
+	private String to_city;
+	@Column(name="duration_in_minutes")
+	private int minutes;
+	
+	private LocalTime departure_time;
+	private LocalTime arrival_time;
+	private String aircraft;
+	
+	
+	
+}

@@ -1,0 +1,61 @@
+package jpql;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Table(name="products")
+@Entity(name="products")
+public class Product {
+	
+	@Id
+	private int prodid;
+	private String prodname;
+	private double price;
+	private int qoh;
+	
+	@ManyToOne
+	@JoinColumn(name="catcode")
+	private Category category;
+	
+	@OneToMany(mappedBy = "products")
+	private List<Sales> sales = new ArrayList<Sales>();
+	
+	public Category getCategory() {
+		return category;
+	}
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+	public int getProdid() {
+		return prodid;
+	}
+	public void setProdid(int prodid) {
+		this.prodid = prodid;
+	}
+	public String getProdname() {
+		return prodname;
+	}
+	public void setProdname(String prodname) {
+		this.prodname = prodname;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public int getQoh() {
+		return qoh;
+	}
+	public void setQoh(int qoh) {
+		this.qoh = qoh;
+	}	
+	
+}

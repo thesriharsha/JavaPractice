@@ -1,0 +1,7 @@
+package shapes;
+
+@Entity(name="shapes.circle")
+@Table(name="circles")
+public class Circle {
+
+}

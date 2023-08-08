@@ -1,0 +1,9 @@
+package day6;
+
+public class GreaterAndLesser50 {
+	public static void main(String[] args)
+	{
+		int[] arr = new int[10];
+		
+	}
+}

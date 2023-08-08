@@ -1,0 +1,11 @@
+package jpaAm;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Table(name="ono_payments")
+@Entity(name="jpaAm.payment")
+public class Payment {
+
+	
+}

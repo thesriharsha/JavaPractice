@@ -1,0 +1,97 @@
+package com.flightinformationsystem.rest;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.flightinformationsystem.entities.City;
+import com.flightinformationsystem.entities.Flight;
+import com.flightinformationsystem.entities.FlightHistory;
+
+@RestController
+public class Controller {
+
+	@Autowired
+	private CityRepo cr;
+	@Autowired
+	private FlightRepo fr;
+	@Autowired
+	private ScheduledFlight sr;
+	@Autowired
+	private FlightHistoryRepo fhr;
+	//1st 
+	@GetMapping("/allcities")
+	public List<String> getCities()
+	{
+		List<String> cities = new ArrayList<String>();
+		for(City c : cr.findAll())
+		{
+			cities.add(c.getName());
+		}
+		return cities;
+	}
+	
+	@GetMapping("/cityall")
+	public List<String> getCitiess()
+	{
+		return cr.getCityNames();
+	}
+	
+	@GetMapping("/allflights")
+	public List<Flight> getallflights()
+	{
+		return fr.findAll();
+	}
+	
+	//4th 
+	@GetMapping("/flighthistory/{flightno}")
+	public List<FlightHistory> displayflighthistories(@PathVariable("flightno") String flightno)
+	{
+		return fr.findById(flightno).get().getFlighthistories();
+	}
+	
+//	public ScheduledFlight addScheduledFlight(@RequestBody ScheduledFlight scheduledflight)
+//	{
+//		try {
+//			schedu
+//		}
+//	}
+//	
+	//6th
+	@PostMapping("/addflight")
+	public Flight addflight(@RequestParam() String flight_no,@RequestParam() String from_city, @RequestParam() String to_city, @RequestParam() Integer minutes, 
+			@RequestParam() LocalTime departure_time,@RequestParam() LocalTime arrival_time, @RequestParam() String aircraft)
+	{
+		if(fr.findById(flight_no).isPresent())
+			throw new ResponseStatusException(HttpStatus.ALREADY_REPORTED);
+		else {
+			var fromCity=cr.findById(from_city);
+			var toCity=cr.findById(to_city);
+			if(fromCity.isPresent() && toCity.isPresent())
+			{
+				Flight flight = new Flight( flight_no,  minutes,  departure_time, arrival_time,  aircraft,
+						fromCity.get(),toCity.get());
+				
+				fr.save(flight);
+				return flight;
+			}
+			else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND,"City code not found");
+			}
+		}
+	}
+	
+	
+	
+	
+}

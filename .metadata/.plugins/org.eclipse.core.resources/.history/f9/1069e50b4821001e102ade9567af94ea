@@ -1,0 +1,223 @@
+package com.flightinformationsystem.rest;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.flightinformationsystem.entities.City;
+import com.flightinformationsystem.entities.Flight;
+import com.flightinformationsystem.entities.FlightHistory;
+import com.flightinformationsystem.entities.FlightId;
+import com.flightinformationsystem.entities.ScheduledFlight;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+@RestController
+@CrossOrigin
+public class Controller {
+
+	@Autowired
+	private CityRepo cityRepo;
+	@Autowired
+	private FlightRepo flightRepo;
+	@Autowired
+	private ScheduledFlightRepo scheduledFlightRepo;
+	@Autowired
+	private FlightHistoryRepo flightHistoryRepo;
+	
+	//1st
+	@Operation(summary = "Display all the City names")
+	@GetMapping("/list/cities")
+	public List<String> getCities()
+	{
+		return cityRepo.getCityNames();
+	}
+	//2nd - List Flights by Pagination
+	@Operation(summary = "Get Flights by Page", description = "Takes the page number as input and display all the flights in that particular page")
+	@GetMapping("/flightsbypage")
+	//@PreAuthorize("hasRole('USER')")
+	public List<Flight> getflightpages(@RequestParam() Integer pageno)
+	{
+		var result = flightRepo.findAll(PageRequest.of(pageno, 5 ));
+		return result.getContent();
+	}
+	
+	//3rd - Flight From city to To city
+	@Operation(summary = "Find Flights by the Source and Destination cities", description = "We provide the Source city where the"
+			+ " flights takes off and the Destination city where the flights land, and it retrieves all the flights which match this route.")
+	@GetMapping("/list/flightsbyroute/{fcity}/{tcity}")
+	public List<Flight> displayFlightsByRoute(@PathVariable("fcity") String fcity, @PathVariable("tcity") String tcity)
+	{
+		return flightRepo.getFlightsByRoute(fcity, tcity);
+	}
+	
+	//4th - FlightHistory of a flight
+	@Operation(summary = "Flight History of a Flight", description = "Takes the flight number as input and gets all the previous ")
+	@GetMapping("/list/flighthistory/{flightno}")
+	public List<FlightHistory> displayflighthistories(@PathVariable("flightno") String flightno)
+	{
+		return flightRepo.findById(flightno).get().getFlightHistories();
+	}
+	
+	//5th - Add Scheduled Flight with From and To dates
+	@Operation(summary = "Add a Scheduled Flight", description = "Takes only flightno and Departure Date, Arrival Date"
+			+ "from the user and get the remaining details from the Flight table.")
+	@PostMapping("/schedule/flight")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ScheduledFlight addScheduledFlight(@RequestParam() String flightno, @RequestParam() LocalDate fromdate, @RequestParam LocalDate todate)
+	{
+		var f = flightRepo.findById(flightno);
+		if(f.isPresent())
+		{
+			if(scheduledFlightRepo.getbyflightno(flightno,fromdate)==null)
+			{
+				
+				var flight = f.get();
+				FlightId fpk = new FlightId();
+				fpk.setFlightNo(flightno);
+				fpk.setDepartureDate(fromdate);
+				ScheduledFlight sf = new ScheduledFlight(flight.getDepartureTime(), todate, flight.getArrivalTime(), flight.getDurationInMinutes() , 
+										fpk, flight.getFromCity(), flight.getToCity());				
+				scheduledFlightRepo.save(sf);
+				return sf;	
+			}
+			else
+				throw new ResponseStatusException(HttpStatus.ALREADY_REPORTED,"Flight with this Departure Date is scheduled already");
+		}
+		else
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Flight not found");
+	}
+	
+//	@PostMapping("/add/flight")
+//	@PreAuthorize("hasRole('ADMIN')")
+//	public String addFlight(@RequestBody Flight flight)
+//	{
+//		flight.getFromCity();
+//		//flightRepo.save(flight);
+//		return flight.getFlightNo();
+//	}
+	
+	//6th - Adding a new Flight
+	@Operation(summary = "Add New flight", description = "Provide details for all the columns in the Flight Table")
+	@PostMapping("/add/flights")
+	@PreAuthorize("hasRole('ADMIN')")
+	public Flight addflights(@RequestParam() String flight_no,@RequestParam() String from_city, @RequestParam() String to_city, @RequestParam() Integer minutes, 
+			@RequestParam() LocalTime departure_time,@RequestParam() LocalTime arrival_time, @RequestParam() String aircraft)
+	{
+		if(flightRepo.findById(flight_no).isPresent())
+			throw new ResponseStatusException(HttpStatus.ALREADY_REPORTED);
+		else {
+			var fromCity=cityRepo.findById(from_city);
+			var toCity=cityRepo.findById(to_city);
+			if(fromCity.isPresent() && toCity.isPresent())
+			{
+				Flight flight = new Flight( flight_no,  minutes,  departure_time, arrival_time,  aircraft,
+						from_city,to_city);
+				
+				flightRepo.save(flight);
+				return flight;
+			}
+			else {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND,"City code not found");
+			}
+		}
+	}
+	
+
+	//7th Cancel Scheduled Flights
+	@Operation(summary = "Cancel Scheduled Flights", description = "We can take a range of dates and cancel all the Flights scheduled during that period")
+	@DeleteMapping("/cancel/flights")
+	@PreAuthorize("hasRole('ADMIN')")
+	public void cancelFlights(@RequestParam() LocalDate fromdate, @RequestParam() LocalDate todate)
+	{
+		var scFlights = scheduledFlightRepo.getflights(fromdate, todate);
+		if(scFlights.size()==0)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No Flights Scheduled in the given dates");
+		else {
+			for(var scf: scFlights)
+			{
+				scheduledFlightRepo.delete(scf);
+			}
+		}
+	}
+	//8th Getting all Delayed Flights
+	@GetMapping("/delayedflights")
+	@Operation(summary = "Display all Delayed Flights", description = "Takes the minutes value and retreives all flights that are delayed by given minutes")
+	public List<FlightHistory> delayedFlights(@RequestParam() int minutes)
+	{
+		return flightHistoryRepo.getDelayedFlights(minutes);
+	}
+	
+	//10th Get Scheduled Flights by from city and departure date
+	@Operation(summary = "Get Scheduled Flights by from city and departure date", description = "Displays all the flights from the given"
+			+ "City on the given Departure Date")
+	@GetMapping("/scheduledflights")
+	public List<ScheduledFlight> scflightsbydate(@RequestParam() String fromcity, @RequestParam() LocalDate departuredate)
+	{
+		return scheduledFlightRepo.getScFlights(fromcity,departuredate);
+	}
+	
+	
+	// 9th - Add City
+	@Operation(summary = "Add a New City", description = "Takes the City body in JSON and add a row in the City table")
+	@PostMapping("/add/city")
+	@PreAuthorize("hasRole('ADMIN')")
+	public City cityadd(@org.springframework.web.bind.annotation.RequestBody City city)
+	{
+		cityRepo.save(city);
+		return city;
+	}
+	//9th - Deleting City
+	@Operation(summary = "Deleting a City", description = "Deletes a City with the help of code")
+	@DeleteMapping("/delete/city")
+	@PreAuthorize("hasRole('ADMIN')")
+	public String deletecity(@RequestParam() String code)
+	{
+		if(cityRepo.findById(code).isPresent())
+		{
+			cityRepo.deleteById(code);
+			return "City Deleted Successfully";
+		}
+		else 
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No City found with the given Code");
+	}
+	
+	//9th Updating a City
+	@Operation(summary = "Update the MinutesFromUTC in a City", description = "Updates with the help of code")
+	@PutMapping("/update/city")
+	@PreAuthorize("hasRole('ADMIN')")
+	public City updateCity(@RequestParam() String code, @RequestParam() int minutes)
+	{
+		var c = cityRepo.findById(code);
+		if(c.isPresent())
+		{
+			var city = c.get();
+			city.setMinutes(minutes);
+			cityRepo.save(city);
+			return city;
+		}
+		else 
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No City found with the given Code");
+	}
+	
+	//Extra APIs
+	
+	// To get flights from a City
+	
+	
+}

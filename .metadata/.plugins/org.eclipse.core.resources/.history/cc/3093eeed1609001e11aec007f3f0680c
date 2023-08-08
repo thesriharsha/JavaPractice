@@ -1,0 +1,10 @@
+package shapes;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity(name="shapes.circle")
+@Table(name="circles")
+public class Circle {
+
+}

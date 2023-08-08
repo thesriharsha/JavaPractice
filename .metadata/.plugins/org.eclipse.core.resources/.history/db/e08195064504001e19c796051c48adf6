@@ -1,0 +1,21 @@
+package jdbcdemo;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class JDBDemo {
+
+	public static void main(String[] args) throws SQLException {
+		Connection c = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;user=sa;password=<YourStrong@Passw0rd>;database=msdb;encrypt=true;trustServerCertificate=true");
+		String query = "insert into products values('Case',150,2,'PU Hard','hd',5);";
+		System.out.println(c.getClass());
+		System.out.println("Connected To Sql Server!");
+		
+		Statement st = c.createStatement();
+		int count = st.executeUpdate(query);
+		System.out.println("Updated!");
+		c.close();
+	}
+}

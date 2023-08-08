@@ -1,0 +1,40 @@
+package shapesv2;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+public class AddShape {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mssqlserver_msdb_1");
+		EntityManager em = emf.createEntityManager();
+		
+		Circle c = new Circle();
+		c.setRadius(4);
+		c.setXcord(0);
+		c.setYcord(5);
+		
+		Square s = new Square();
+		s.setSide(6);
+		s.setXcord(3);
+		s.setYcord(5);
+		
+		Rectangle r = new Rectangle();
+		r.setLength(10);
+		r.setBreadth(5);
+		r.setXcord(7);
+		r.setYcord(9);
+		
+		em.getTransaction().begin();
+		em.persist(r);
+		em.persist(s);
+		em.persist(c);
+		em.getTransaction().commit();
+		
+		emf.close();
+		
+	}
+
+}

@@ -1,0 +1,12 @@
+package empdept;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Table(name="employee")
+@Entity(name="empdept.employee")
+public class Employee {
+
+	
+	
+}

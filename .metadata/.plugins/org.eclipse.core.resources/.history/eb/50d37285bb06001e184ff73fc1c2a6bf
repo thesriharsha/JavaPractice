@@ -1,0 +1,16 @@
+package empdept;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
+
+@Table(name="employee")
+@Entity(name="empdept.employee")
+public class Employee {
+
+	@Id
+	private int empid;
+	private String salary;
+	
+	
+}

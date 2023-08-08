@@ -1,0 +1,25 @@
+package jdbcdemo;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class TotalSales {
+
+	public static void main(String[] args) throws SQLException {
+		
+		String url = "jdbc:sqlserver://localhost:1433;user=sa;password=<YourStrong@Passw0rd>;database=msdb;encrypt=true;trustServerCertficate=true";
+		Connection c = DriverManager.getConnection(url);
+		System.out.println("Enter the Prodid you want the sales for ");
+		Scanner sc = new Scanner(System.in);
+		int prodid= sc.nextInt();
+		PreparedStatement ps = c.prepareStatement("select p.ProdId, count(qty) as TotalSales from products p left join sales s on(p.ProdId= s.ProdId) where p.prodid =? group by p.ProdId;");
+		ps.setInt(1, prodid);
+		ps.executeUpdate();
+		
+
+	}
+
+}

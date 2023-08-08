@@ -1,0 +1,25 @@
+package day6;
+import java.util.*;
+public class GuessGame {
+	public static void main(String[] args)
+	{
+		long x = Math.round(Math.random()*20);
+		long choice;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter a whole number in the range 0 to 20");
+		for(int i=3;i>0;i--)
+		{
+			System.out.printf("You have %d chances\n",(i));
+			choice  = sc.nextLong();
+			if(x==choice)
+			{
+				System.out.println("Hurray! You have guessed it right");
+				return;
+			}
+			else {
+				System.out.println("Your Guess is incorrect, Try Again!");
+			}
+		}
+		System.out.println("Sorry you have failed this Game!!!");
+	}
+}

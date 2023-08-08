@@ -1,0 +1,17 @@
+package day11;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Scanner;
+
+public class RollNo {
+
+	public static void main(String[] args) throws FileNotFoundException {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter the roll no of Student");
+		FileReader fr = new FileReader("/home/developer/files/roll.txt");
+		
+	}
+
+}

@@ -1,0 +1,22 @@
+package entities;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+public class ListFlight {
+
+	public static void main(String[] args) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("flightsystem");
+		EntityManager em = emf.createEntityManager();
+		
+		var flights = em.createQuery("from entities.Flight", Flight.class).getResultList();
+		
+		for(Flight flight : flights)
+		{
+			System.out.println(flight.getFlight_no()+"  "+flight.getFrom_city()+"  "+flight.getTo_city());
+		}
+	emf.close();
+	
+	}
+}
